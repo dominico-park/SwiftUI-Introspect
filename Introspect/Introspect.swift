@@ -115,11 +115,13 @@ public enum Introspect {
         ofType type: AnyViewType.Type,
         from entry: PlatformView
     ) -> AnyViewType? {
-        
+        debugPrint("🦾 previousSibling superview = \(entry.superview)")
+        debugPrint("🦾 previousSibling subviews = \(entry.superview?.subviews)")
         guard let superview = entry.superview,
             let entryIndex = superview.subviews.firstIndex(of: entry),
             entryIndex > 0
         else {
+            debugPrint("🦾 cannot find previousSibling ")
             return nil
         }
         
@@ -230,12 +232,15 @@ public enum Introspect {
     /// Finds an ancestor of the specified type.
     /// If it reaches the top of the view without finding the specified view type, it returns nil.
     public static func findAncestor<AnyViewType: PlatformView>(ofType type: AnyViewType.Type, from entry: PlatformView) -> AnyViewType? {
+        debugPrint("🦾 findAncestor = \(entry)")
         var superview = entry.superview
         while let s = superview {
             if let typed = s as? AnyViewType {
+                debugPrint("🦾 findAncestor typed = \(typed)")
                 return typed
             }
             superview = s.superview
+            debugPrint("🦾 findAncestor superview = \(superview)")
         }
         return nil
     }
@@ -306,9 +311,13 @@ public enum TargetViewSelector {
     }
     
     public static func siblingOfType<TargetView: PlatformView>(from entry: PlatformView) -> TargetView? {
-        guard let viewHost = Introspect.findViewHost(from: entry) else {
+        debugPrint("🦾 entry = \(entry)")
+        guard
+            let viewHost = Introspect.findViewHost(from: entry)
+        else {
             return nil
         }
+        debugPrint("🦾 viewHost = \(viewHost)")
         return Introspect.previousSibling(ofType: TargetView.self, from: viewHost)
     }
 
